@@ -1,2 +1,2 @@
-msrv = "1.70"
+msrv = "1.73"
 check-private-items = true

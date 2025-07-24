@@ -1,9 +1,6 @@
-use std::{fs::File, io, os::fd::AsRawFd};
+use std::{fs::File, io, os::unix::fs};
 
-use crate::{
-    cutils::cerr,
-    system::interface::{GroupId, UserId},
-};
+use crate::system::interface::{GroupId, UserId};
 
 pub(crate) trait Chown {
     fn chown(&self, uid: UserId, gid: GroupId) -> io::Result<()>;
@@ -11,10 +8,6 @@ pub(crate) trait Chown {
 
 impl Chown for File {
     fn chown(&self, owner: UserId, group: GroupId) -> io::Result<()> {
-        let fd = self.as_raw_fd();
-
-        // SAFETY: `fchown` is passed a proper file descriptor; and even if the user/group id
-        // is invalid, it will not cause UB.
-        cerr(unsafe { libc::fchown(fd, owner.inner(), group.inner()) }).map(|_| ())
+        fs::fchown(self, Some(owner.inner()), Some(group.inner()))
     }
 }
