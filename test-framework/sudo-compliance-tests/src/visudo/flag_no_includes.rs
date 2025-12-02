@@ -21,7 +21,7 @@ cat $2 >> {LOGS_PATH}"
         .arg("--no-includes")
         .output(&env)
         .assert_success();
-    let logs = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let logs = env.read_file(LOGS_PATH);
 
     let comments = logs
         .lines()
@@ -54,7 +54,7 @@ cat $2 >> {LOGS_PATH}"
         .arg("--no-includes")
         .output(&env)
         .assert_success();
-    let logs = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let logs = env.read_file(LOGS_PATH);
 
     let comments = logs
         .lines()
@@ -92,7 +92,7 @@ cat $2 >> {LOGS_PATH}"
         .arg("--no-includes")
         .output(&env)
         .assert_success();
-    let logs = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let logs = env.read_file(LOGS_PATH);
 
     let comments = logs
         .lines()

@@ -36,7 +36,7 @@ echo '{expected}' > {LOGS_PATH}"
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -87,7 +87,7 @@ echo "$@" > {LOGS_PATH}"#
         .output(&env)
         .assert_success();
 
-    let args = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let args = env.read_file(LOGS_PATH);
 
     if sudo_test::is_original_sudo() {
         assert_starts_with!(args, "/var/tmp");
@@ -115,7 +115,7 @@ ls -l "$1" > {LOGS_PATH}"#
         .output(&env)
         .assert_success();
 
-    let ls_output = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let ls_output = env.read_file(LOGS_PATH);
 
     assert_ls_output(&ls_output, "-rw-------", USERNAME, "users");
 }
@@ -145,7 +145,7 @@ ALL ALL=(ALL:ALL) NOPASSWD:ALL";
     output.assert_success();
     assert_contains!(output.stderr(), format!("{ETC_SUDOERS} unchanged"));
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -174,7 +174,7 @@ exit 11",
 
     output.assert_exit_code(11);
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -230,7 +230,7 @@ cp $1 {LOGS_PATH}"
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -361,7 +361,7 @@ echo '{editor}' > \"$1\""
             assert_contains!(output.stderr(), "sudoedit doesn't need to be run via sudo");
         }
 
-        let actual = Command::new("cat").arg("/bin/foo.sh").output(&env).stdout();
+        let actual = env.read_file("/bin/foo.sh");
 
         assert_eq!(editor, actual);
     }
@@ -393,7 +393,7 @@ done",
         .assert_success();
 
     for file in files {
-        let actual = Command::new("cat").arg(file).output(&env).stdout();
+        let actual = env.read_file(file);
 
         assert_starts_with!(
             actual[actual.rfind('/').unwrap()..],
@@ -425,7 +425,7 @@ done",
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg("/foo").output(&env).stdout();
+    let actual = env.read_file("/foo");
 
     assert_starts_with!(actual[actual.rfind('/').unwrap()..], "/foo");
 }

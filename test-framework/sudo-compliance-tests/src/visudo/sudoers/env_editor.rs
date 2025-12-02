@@ -96,7 +96,7 @@ fn uses_editor() {
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -117,7 +117,7 @@ fn visual_has_precedence_over_editor() {
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -138,7 +138,7 @@ fn sudo_editor_has_precedence_over_visual() {
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -174,7 +174,7 @@ echo '{expected}' > {LOGS_PATH}"
 
         output.assert_success();
 
-        let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+        let actual = env.read_file(LOGS_PATH);
 
         assert_eq!(expected, actual);
     }

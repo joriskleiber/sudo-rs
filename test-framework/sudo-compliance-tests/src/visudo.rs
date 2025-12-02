@@ -55,7 +55,7 @@ echo '{expected}' > {LOGS_PATH}"
 
     Command::new("visudo").output(&env).assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -125,7 +125,7 @@ echo "$@" > {LOGS_PATH}"#
 
     Command::new("visudo").output(&env).assert_success();
 
-    let args = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let args = env.read_file(LOGS_PATH);
 
     if sudo_test::is_original_sudo() {
         assert_eq!(format!("-- {ETC_DIR}/sudoers.tmp"), args);
@@ -154,7 +154,7 @@ ls -l /tmp/sudoers-*/sudoers > {LOGS_PATH}"#
 
     Command::new("visudo").output(&env).assert_success();
 
-    let ls_output = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let ls_output = env.read_file(LOGS_PATH);
 
     if sudo_test::is_original_sudo() {
         //TODO: this is incorrect, will be fixed in a future sudo; the
@@ -187,7 +187,7 @@ echo '{expected}' >> $2"#
 
     Command::new("visudo").output(&env).assert_success();
 
-    let sudoers = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let sudoers = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, sudoers);
 }
@@ -219,7 +219,7 @@ fn stderr_message_when_file_is_not_modified() {
         assert_snapshot!(stderr);
     }
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -244,7 +244,7 @@ echo 'this is fine' > $2",
     output.assert_success();
     assert_contains!(output.stderr(), "syntax error");
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -267,7 +267,7 @@ exit 11",
 
     output.assert_success();
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -315,7 +315,7 @@ cp $2 {LOGS_PATH}"
 
     Command::new("visudo").output(&env).assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }

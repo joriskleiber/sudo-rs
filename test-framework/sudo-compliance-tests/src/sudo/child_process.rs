@@ -52,7 +52,7 @@ fn sudo_forwards_stdin_to_child() {
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(path).output(&env).stdout();
+    let actual = env.read_file(path);
 
     assert_eq!(expected, actual);
 }

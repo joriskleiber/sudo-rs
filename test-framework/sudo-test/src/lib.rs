@@ -115,6 +115,15 @@ pub struct Env {
     users: HashSet<Username>,
 }
 
+impl Env {
+    /// Reads the contents of a file in the test environment
+    pub fn read_file(&self, path: impl AsRef<str>) -> String {
+        let out = Command::new("cat").arg(path.as_ref()).output(self);
+        out.assert_success();
+        out.stdout()
+    }
+}
+
 /// creates a new test environment builder that contains the specified `/etc/sudoers` file
 #[allow(non_snake_case)]
 pub fn Env(sudoers: impl Into<TextFile>) -> EnvBuilder {
@@ -1003,13 +1012,13 @@ mod tests {
         let expected = "Defaults !fqdn, !lecture, !mailerpath\nHello, root!";
         let env = Env("Hello, root!").build();
 
-        let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+        let actual = env.read_file(ETC_SUDOERS);
         assert_eq!(expected, actual);
 
         let expected = "Hello, root!";
         let env = EnvNoImplicit(expected).build();
 
-        let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+        let actual = env.read_file(ETC_SUDOERS);
         assert_eq!(expected, actual);
     }
 
@@ -1025,7 +1034,7 @@ mod tests {
             .file(path, TextFile(expected_contents).chown(chown).chmod(chmod))
             .build();
 
-        let actual_contents = Command::new("cat").arg(path).output(&env).stdout();
+        let actual_contents = env.read_file(path);
         assert_eq!(expected_contents, &actual_contents);
 
         let ls_l = Command::new("ls").args(["-l", path]).output(&env).stdout();

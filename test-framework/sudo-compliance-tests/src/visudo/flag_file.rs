@@ -69,7 +69,7 @@ echo '{expected}' > $2"#
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(file_path).output(&env).stdout();
+    let actual = env.read_file(file_path);
     assert_eq!(expected, actual);
 }
 
@@ -95,7 +95,7 @@ echo '{expected}' > $2"#
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(file_path).output(&env).stdout();
+    let actual = env.read_file(file_path);
     assert_eq!(expected, actual);
 }
 
@@ -124,10 +124,10 @@ echo '{expected}' > $2"#
         .output(&env)
         .assert_success();
 
-    let changed = Command::new("cat").arg(file_path).output(&env).stdout();
+    let changed = env.read_file(file_path);
     assert_eq!(expected, changed);
 
-    let unchanged = Command::new("cat").arg(file_path2).output(&env).stdout();
+    let unchanged = env.read_file(file_path2);
     assert_eq!(original, unchanged);
 }
 
@@ -151,7 +151,7 @@ echo '{unexpected}' > $2"
         .output(&env)
         .assert_success();
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -175,7 +175,7 @@ echo "$@" > {LOGS_PATH}"#
         .output(&env)
         .assert_success();
 
-    let args = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let args = env.read_file(LOGS_PATH);
 
     if sudo_test::is_original_sudo() {
         assert_eq!(format!("-- {file_path}.tmp"), args);
@@ -243,7 +243,7 @@ echo '{expected}' > $2"#
         .output(&env)
         .assert_success();
 
-    let sudoers = Command::new("cat").arg(file_path).output(&env).stdout();
+    let sudoers = env.read_file(file_path);
 
     assert_eq!(expected, sudoers);
 }

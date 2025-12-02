@@ -38,7 +38,7 @@ fn on_e_re_edits() {
         .output(&env)
         .assert_success();
 
-    let logs = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let logs = env.read_file(LOGS_PATH);
 
     let lines = logs.lines().collect::<Vec<_>>();
 
@@ -65,14 +65,14 @@ fn on_x_closes_without_saving_changes() {
         .output(&env)
         .assert_success();
 
-    let logs = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let logs = env.read_file(LOGS_PATH);
 
     let lines = logs.lines().collect::<Vec<_>>();
 
     let num_times_called = lines.len();
     assert_eq!(1, num_times_called);
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(expected, actual);
 }
@@ -90,14 +90,14 @@ fn on_uppercase_q_closes_while_saving_changes() {
         .output(&env)
         .assert_success();
 
-    let logs = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let logs = env.read_file(LOGS_PATH);
 
     let lines = logs.lines().collect::<Vec<_>>();
 
     let num_times_called = lines.len();
     assert_eq!(1, num_times_called);
 
-    let actual = Command::new("cat").arg(ETC_SUDOERS).output(&env).stdout();
+    let actual = env.read_file(ETC_SUDOERS);
 
     assert_eq!(BAD_SUDOERS, actual);
 }

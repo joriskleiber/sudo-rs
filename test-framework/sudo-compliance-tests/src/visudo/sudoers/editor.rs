@@ -21,7 +21,7 @@ echo '{expected}' >> {LOGS_PATH}"
 
     Command::new("visudo").output(&env).assert_success();
 
-    let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+    let actual = env.read_file(LOGS_PATH);
 
     assert_eq!(expected, actual);
 }
@@ -51,7 +51,7 @@ echo '{expected}' >> {LOGS_PATH}"
             .assert_success();
 
         Command::new("visudo").output(&env).assert_success();
-        let actual = Command::new("cat").arg(LOGS_PATH).output(&env).stdout();
+        let actual = env.read_file(LOGS_PATH);
 
         assert_eq!(expected, actual);
     }

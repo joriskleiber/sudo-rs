@@ -106,7 +106,7 @@ echo {message}"
         .build();
 
     // restricted shell = "a shell not in /etc/shells"
-    let etc_shells = Command::new("cat").arg("/etc/shells").output(&env).stdout();
+    let etc_shells = env.read_file("/etc/shells");
     assert_not_contains!(etc_shells, restricted_shell_path);
 
     let output = Command::new("su")
